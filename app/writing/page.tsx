@@ -96,7 +96,7 @@ export default function WritingPage() {
           placeholder="Type or paste your story or letter here…"
         />
 
-        <button onClick={grade} disabled={loading || !essay.trim()}>
+        <button className="accent" onClick={grade} disabled={loading || !essay.trim()}>
           {loading ? "Marking…" : "Get feedback"}
         </button>
       </div>
