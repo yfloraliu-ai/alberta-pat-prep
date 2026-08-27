@@ -18,7 +18,7 @@ function PracticeInner() {
     SUBJECTS.some((s) => s.id === initialSubject) ? initialSubject : "math",
   );
   const subject = SUBJECTS.find((s) => s.id === subjectId)!;
-  const [topic, setTopic] = useState(subject.topics[0]);
+  const [topic, setTopic] = useState(subject.units[0].topics[0]);
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
   const [count, setCount] = useState(5);
 
@@ -32,7 +32,7 @@ function PracticeInner() {
   function changeSubject(id: SubjectId) {
     setSubjectId(id);
     const next = SUBJECTS.find((s) => s.id === id)!;
-    setTopic(next.topics[0]);
+    setTopic(next.units[0].topics[0]);
   }
 
   async function generate() {
@@ -89,10 +89,14 @@ function PracticeInner() {
 
         <label htmlFor="topic">Topic</label>
         <select id="topic" value={topic} onChange={(e) => setTopic(e.target.value)}>
-          {subject.topics.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
+          {subject.units.map((unit) => (
+            <optgroup key={unit.name} label={unit.name}>
+              {unit.topics.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
 

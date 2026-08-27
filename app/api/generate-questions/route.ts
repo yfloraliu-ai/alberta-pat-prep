@@ -160,9 +160,11 @@ export async function POST(request: NextRequest) {
     });
   }
 
+  const unit = subject.units.find((u) => u.topics.includes(body.topic));
+
   const prompt = `You are an expert Alberta Grade 6 teacher writing practice questions for the Provincial Achievement Test (PAT).
 
-Subject: ${subject.name} (${subject.patPart})
+Subject: ${subject.name} (${subject.patPart})${unit ? `\nCurriculum unit: ${unit.name}` : ""}
 Topic: ${body.topic}
 Difficulty: ${difficulty}
 Number of questions: ${count}
