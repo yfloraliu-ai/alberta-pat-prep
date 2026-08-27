@@ -30,6 +30,12 @@ function PracticeInner() {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
 
+  type TutorMessage = { role: "user" | "assistant"; content: string };
+  const [tutorOpen, setTutorOpen] = useState<Record<number, boolean>>({});
+  const [tutorMsgs, setTutorMsgs] = useState<Record<number, TutorMessage[]>>({});
+  const [tutorInput, setTutorInput] = useState<Record<number, string>>({});
+  const [tutorLoading, setTutorLoading] = useState<Record<number, boolean>>({});
+
   function changeSubject(id: SubjectId) {
     setSubjectId(id);
     const next = SUBJECTS.find((s) => s.id === id)!;
@@ -42,6 +48,10 @@ function PracticeInner() {
     setQuestions(null);
     setAnswers({});
     setSubmitted(false);
+    setTutorOpen({});
+    setTutorMsgs({});
+    setTutorInput({});
+    setTutorLoading({});
     try {
       const res = await fetch("/api/generate-questions", {
         method: "POST",
@@ -65,6 +75,49 @@ function PracticeInner() {
   const numCorrect = questions
     ? questions.filter((q, i) => answers[i] === q.answerIndex).length
     : 0;
+
+  async function sendTutor(qi: number) {
+    if (!questions) return;
+    const text = (tutorInput[qi] ?? "").trim();
+    if (!text || tutorLoading[qi]) return;
+    const q = questions[qi];
+    const history = [...(tutorMsgs[qi] ?? []), { role: "user" as const, content: text }];
+    setTutorMsgs((prev) => ({ ...prev, [qi]: history }));
+    setTutorInput((prev) => ({ ...prev, [qi]: "" }));
+    setTutorLoading((prev) => ({ ...prev, [qi]: true }));
+    try {
+      const res = await fetch("/api/tutor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: subject.name,
+          topic,
+          question: q,
+          studentAnswerIndex: answers[qi],
+          messages: history,
+        }),
+      });
+      const data: { reply?: string; error?: string } = await res.json();
+      const reply =
+        res.ok && data.reply
+          ? data.reply
+          : data.error ?? "Sorry, something went wrong. Please try again.";
+      setTutorMsgs((prev) => ({
+        ...prev,
+        [qi]: [...(prev[qi] ?? []), { role: "assistant", content: reply }],
+      }));
+    } catch {
+      setTutorMsgs((prev) => ({
+        ...prev,
+        [qi]: [
+          ...(prev[qi] ?? []),
+          { role: "assistant", content: "Network error — please try again." },
+        ],
+      }));
+    } finally {
+      setTutorLoading((prev) => ({ ...prev, [qi]: false }));
+    }
+  }
 
   function submitAnswers() {
     if (!questions) return;
@@ -223,6 +276,49 @@ function PracticeInner() {
                       <p className="concept-note">
                         <strong>Knowledge point:</strong> {q.concept}
                       </p>
+                    )}
+                    {!tutorOpen[qi] ? (
+                      <button
+                        className="secondary tutor-open"
+                        onClick={() =>
+                          setTutorOpen((prev) => ({ ...prev, [qi]: true }))
+                        }
+                      >
+                        Ask the AI tutor about this question
+                      </button>
+                    ) : (
+                      <div className="tutor-box">
+                        <p className="tutor-title">AI Tutor</p>
+                        {(tutorMsgs[qi] ?? []).map((m, mi) => (
+                          <div className={`tutor-msg ${m.role}`} key={mi}>
+                            {m.content}
+                          </div>
+                        ))}
+                        {tutorLoading[qi] && (
+                          <div className="tutor-msg assistant">Thinking…</div>
+                        )}
+                        <div className="tutor-input">
+                          <input
+                            value={tutorInput[qi] ?? ""}
+                            onChange={(e) =>
+                              setTutorInput((prev) => ({
+                                ...prev,
+                                [qi]: e.target.value,
+                              }))
+                            }
+                            onKeyDown={(e) => e.key === "Enter" && sendTutor(qi)}
+                            placeholder='Ask anything about this question, e.g. "Why do we multiply first?"'
+                          />
+                          <button
+                            onClick={() => sendTutor(qi)}
+                            disabled={
+                              tutorLoading[qi] || !(tutorInput[qi] ?? "").trim()
+                            }
+                          >
+                            Send
+                          </button>
+                        </div>
+                      </div>
                     )}
                   </div>
                 )}

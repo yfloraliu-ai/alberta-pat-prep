@@ -363,6 +363,59 @@ button.accent:hover {
   font-size: 0.9rem;
 }
 
+/* AI tutor chat */
+button.tutor-open {
+  margin-top: 0.7rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.tutor-box {
+  margin-top: 0.7rem;
+  border-top: 1px dashed var(--line);
+  padding-top: 0.6rem;
+}
+
+.tutor-title {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.4rem;
+}
+
+.tutor-msg {
+  padding: 0.5rem 0.75rem;
+  margin: 0.35rem 0;
+  max-width: 88%;
+  font-size: 0.93rem;
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 4px;
+  white-space: pre-wrap;
+}
+
+.tutor-msg.user {
+  margin-left: auto;
+  background: #fdf6d8;
+  border-color: var(--gold);
+}
+
+.tutor-input {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tutor-input input {
+  flex: 1;
+}
+
+.tutor-input button {
+  margin-top: 0;
+  padding: 0.55rem 1.1rem;
+}
+
 .score-line {
   display: flex;
   justify-content: space-between;
