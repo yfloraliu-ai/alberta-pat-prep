@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SUBJECTS, type Question, type SubjectId } from "@/lib/pat-data";
+import { addPracticeRecord } from "@/lib/history";
 
 interface GenerateResponse {
   demoMode?: boolean;
@@ -20,7 +21,7 @@ function PracticeInner() {
   const subject = SUBJECTS.find((s) => s.id === subjectId)!;
   const [topic, setTopic] = useState(subject.units[0].topics[0]);
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
-  const [count, setCount] = useState(5);
+  const [count, setCount] = useState(10);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,6 +65,20 @@ function PracticeInner() {
   const numCorrect = questions
     ? questions.filter((q, i) => answers[i] === q.answerIndex).length
     : 0;
+
+  function submitAnswers() {
+    if (!questions) return;
+    setSubmitted(true);
+    const correct = questions.filter((q, i) => answers[i] === q.answerIndex).length;
+    addPracticeRecord({
+      subjectId,
+      subject: subject.name,
+      topic,
+      difficulty,
+      total: questions.length,
+      correct,
+    });
+  }
 
   return (
     <>
@@ -174,7 +189,7 @@ function PracticeInner() {
 
           {!submitted ? (
             <button
-              onClick={() => setSubmitted(true)}
+              onClick={submitAnswers}
               disabled={Object.keys(answers).length < questions.length}
             >
               Check answers

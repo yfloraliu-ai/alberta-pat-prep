@@ -6,6 +6,7 @@ import {
   type EssayFeedback,
   type WritingAssignment,
 } from "@/lib/pat-data";
+import { addWritingRecord } from "@/lib/history";
 
 interface GradeResponse {
   demoMode?: boolean;
@@ -51,6 +52,15 @@ export default function WritingPage() {
       }
       setDemoMode(Boolean(data.demoMode));
       setFeedback(data.feedback);
+      if (data.feedback.scores.length > 0) {
+        const average =
+          data.feedback.scores.reduce((sum, s) => sum + s.score, 0) /
+          data.feedback.scores.length;
+        addWritingRecord({
+          assignment: WRITING_ASSIGNMENTS[assignment].name,
+          average: Math.round(average * 10) / 10,
+        });
+      }
     } catch {
       setError("Network error. Please try again.");
     } finally {
