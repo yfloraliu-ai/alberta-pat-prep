@@ -82,6 +82,7 @@ function PracticeInner() {
 
   return (
     <>
+      <div className="screen-only">
       <h1>Practice Questions</h1>
       <p className="subtitle">
         Choose a subject and topic, and the AI will write PAT-style questions
@@ -154,6 +155,15 @@ function PracticeInner() {
 
       {questions && (
         <div className="card">
+          <p style={{ textAlign: "right", margin: 0 }}>
+            <button
+              className="secondary"
+              style={{ marginTop: 0 }}
+              onClick={() => window.print()}
+            >
+              Print worksheet
+            </button>
+          </p>
           {questions.map((q, qi) => {
             const chosen = answers[qi];
             return (
@@ -204,6 +214,45 @@ function PracticeInner() {
               </button>
             </>
           )}
+        </div>
+      )}
+      </div>
+
+      {questions && (
+        <div className="print-sheet">
+          <p className="ws-title">Alberta PAT Prep — Practice Worksheet</p>
+          <p className="ws-meta">
+            {subject.name} · {topic} · Difficulty: {difficulty} ·{" "}
+            {questions.length} questions
+          </p>
+          <div className="ws-nameline">
+            <span>Name: ______________________________</span>
+            <span>Date: ______________________</span>
+          </div>
+          {questions.map((q, qi) => (
+            <div className="ws-question" key={qi}>
+              <p className="ws-stem">
+                {qi + 1}. {q.question}
+              </p>
+              {q.options.map((opt, oi) => (
+                <p className="ws-option" key={oi}>
+                  <span className="ws-circle" /> {String.fromCharCode(65 + oi)}.{" "}
+                  {opt}
+                </p>
+              ))}
+            </div>
+          ))}
+          <div className="ws-key">
+            <h2>Answer Key</h2>
+            <ol>
+              {questions.map((q, qi) => (
+                <li key={qi}>
+                  <strong>{String.fromCharCode(65 + q.answerIndex)}</strong> —{" "}
+                  {q.explanation}
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       )}
     </>
