@@ -52,8 +52,13 @@ Write ${count} multiple-choice questions in authentic Grade 6 PAT style:
 - A brief explanation of the correct answer written for a Grade 6 student
 - For reading questions, include a short passage inside the question text
 
+For EVERY question, also provide teaching support written for a Grade 6 student:
+- "optionNotes": exactly 4 strings, index-aligned with the options. For each WRONG option, explain the specific misconception or error that leads a student to pick it; for the correct option, briefly restate why it is right.
+- "concept": the knowledge point this question tests, in one or two sentences, so a student who got it wrong knows what to review.
+- "steps": a numbered step-by-step solution path showing how to work from the question to the answer. ALWAYS include steps for Mathematics; for other subjects include steps when a strategy helps (e.g. how to find evidence in the passage), otherwise use an empty array.
+
 Reply with ONLY a JSON object in this exact shape:
-{"questions": [{"question": "...", "options": ["...", "...", "...", "..."], "answerIndex": 0, "explanation": "..."}]}`;
+{"questions": [{"question": "...", "options": ["...", "...", "...", "..."], "answerIndex": 0, "explanation": "...", "optionNotes": ["...", "...", "...", "..."], "concept": "...", "steps": ["..."]}]}`;
 
   try {
     const response = await client.messages.create({

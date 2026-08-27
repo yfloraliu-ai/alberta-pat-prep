@@ -192,7 +192,40 @@ function PracticeInner() {
                     </div>
                   );
                 })}
-                {submitted && <div className="explanation">💡 {q.explanation}</div>}
+                {submitted && (
+                  <div className="explanation">
+                    {chosen !== undefined && chosen !== q.answerIndex && (
+                      <p style={{ margin: "0 0 0.5rem" }}>
+                        <strong>
+                          Why {String.fromCharCode(65 + chosen)} is not correct:
+                        </strong>{" "}
+                        {q.optionNotes?.[chosen] ??
+                          "Compare your thinking with the explanation below."}
+                      </p>
+                    )}
+                    <p style={{ margin: 0 }}>
+                      <strong>
+                        Correct answer — {String.fromCharCode(65 + q.answerIndex)}:
+                      </strong>{" "}
+                      {q.explanation}
+                    </p>
+                    {q.steps && q.steps.length > 0 && (
+                      <div style={{ margin: "0.5rem 0 0" }}>
+                        <strong>How to solve it:</strong>
+                        <ol style={{ margin: "0.2rem 0 0", paddingLeft: "1.4rem" }}>
+                          {q.steps.map((s, si) => (
+                            <li key={si}>{s}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+                    {q.concept && (
+                      <p className="concept-note">
+                        <strong>Knowledge point:</strong> {q.concept}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
@@ -249,6 +282,9 @@ function PracticeInner() {
                 <li key={qi}>
                   <strong>{String.fromCharCode(65 + q.answerIndex)}</strong> —{" "}
                   {q.explanation}
+                  {q.steps && q.steps.length > 0 && (
+                    <> Steps: {q.steps.join(" → ")}</>
+                  )}
                 </li>
               ))}
             </ol>

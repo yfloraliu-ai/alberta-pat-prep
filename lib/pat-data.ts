@@ -271,6 +271,12 @@ export interface Question {
   options: string[];
   answerIndex: number;
   explanation: string;
+  /** Per-option note: why each option is right or wrong (index-aligned with options). */
+  optionNotes?: string[];
+  /** The knowledge point / concept this question tests. */
+  concept?: string;
+  /** Step-by-step solution path (always present for math). */
+  steps?: string[];
 }
 
 // ELA Part A writing assignments as defined in the PAT.

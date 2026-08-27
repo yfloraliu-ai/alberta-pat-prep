@@ -355,6 +355,14 @@ button.accent:hover {
   font-size: 0.95rem;
 }
 
+.concept-note {
+  margin: 0.6rem 0 0;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--line);
+  color: var(--body-muted);
+  font-size: 0.9rem;
+}
+
 .score-line {
   display: flex;
   justify-content: space-between;
