@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SUBJECTS, type Question, type SubjectId } from "@/lib/pat-data";
 import { addPracticeRecord } from "@/lib/history";
+import { addMistake } from "@/lib/mistakes";
 
 interface GenerateResponse {
   demoMode?: boolean;
@@ -130,6 +131,17 @@ function PracticeInner() {
       difficulty,
       total: questions.length,
       correct,
+    });
+    questions.forEach((q, i) => {
+      if (answers[i] !== q.answerIndex) {
+        addMistake({
+          subjectId,
+          subject: subject.name,
+          topic,
+          question: q,
+          chosenIndex: answers[i] ?? -1,
+        });
+      }
     });
   }
 
